@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>SIP Wealth Calculator</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+
+    <h1 class>
+        SIP Wealth Calculator
+    </h1>
+
+    <div class="card p-4 shadow">
+
+        <input type="number"
+               id="amount"
+               placeholder="Monthly Investment Amount"
+               class="form-control">
+
+        <input type="number"
+               id="years"
+               placeholder="Investment Period (Years)"
+               class="form-control">
+
+        <input type="number"
+               id="rate"
+               placeholder="Expected Annual Return (%)"
+               class="form-control">
+
+        <button class="btn btn-primary"
+                onclick="calculateSIP()">
+
+            Calculate
+
+        </button>
+
+    </div>
+
+    <div class="card">
+
+        <h3>Summary</h3>
+
+        <hr>
+
+        <p>
+            <b>Expected Amount :</b>
+            <span id="total"></span>
+        </p>
+
+        <p>
+            <b>Amount Invested :</b>
+            <span id="invested"></span>
+        </p>
+
+        <p>
+            <b>Wealth Gain :</b>
+            <span id="returns"></span>
+        </p>
+
+        <p>
+            <b>Predicted Return :</b>
+            <span id="prediction"></span>
+        </p>
+
+        <p>
+            <b>AI Advice :</b>
+            <span id="advice"></span>
+        </p>
+
+    </div>
+
+</div>
+
+<script>
+
+async function calculateSIP(){
+
+    let amount =
+        document.getElementById("amount").value;
+
+    let years =
+        document.getElementById("years").value;
+
+    let rate =
+        document.getElementById("rate").value;
+
+    try{
+
+        let response = await fetch(
+            "http://127.0.0.1:5000/calculate",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    amount: amount,
+                    years: years,
+                    rate: rate
+                })
+            }
+        );
+
+        let data = await response.json();
+
+        console.log(data);
+
+        if(data.error){
+
+            alert(data.error);
+
+            return;
+        }
+
+        document.getElementById("total").innerHTML =
+            data["Expected Amount"];
+
+        document.getElementById("invested").innerHTML =
+            data["Amount Invested"];
+
+        document.getElementById("returns").innerHTML =
+            data["Wealth Gain"];
+
+        document.getElementById("prediction").innerHTML =
+            data["Predicted Return"];
+
+        document.getElementById("advice").innerHTML =
+            data["AI Advice"];
+
+    }
+
+    catch(error){
+
+        console.log(error);
+
+        alert("Backend connection error");
+    }
+}
+
+</script>
+
+</body>
+
+</html>
